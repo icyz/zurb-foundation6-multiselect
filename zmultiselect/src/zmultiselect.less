@@ -1,0 +1,119 @@
+/*!
+* ZMULTISELECT ZURB FOUNDATION 6
+* @author: Andrea Mariani
+* @email: andrea.mariani@fasys.it
+* @twitter: @andreamariani2k
+* @web: www.fasys.it
+* @license: MIT
+!*/
+
+@bgColor: #fafafa;
+@bgColorHover: #2672EC; //#c9da29
+
+.zselect {
+  margin: 0 0 1rem 0;
+  padding: 0.5rem 24px 0.5rem 0.5rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: @bgColor url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='32' height='24' viewBox='0 0 32 24'><polygon points='0,0 32,0 16,24' style='fill: rgb%28138, 138, 138%29'></polygon></svg>") no-repeat;
+  background-origin: content-box;
+  background-position: right -1rem center;
+
+  background-size: 9px 6px;
+  border: 1px solid #cccccc;
+
+  font-size: 0.77778rem;
+  font-family: inherit;
+  font-weight: normal;
+
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+}
+
+.zselect ul {
+  position: absolute;
+  background-color: #fafafa;
+  border: 1px solid #cccccc;
+  border-top: none;
+  padding: 0;
+  margin: 8px 0 0 -0.55rem;
+  z-index: 10;
+  list-style-type: none;
+  display: none;
+
+}
+
+.zselect span.zmshead {
+  font-size: 0.9rem;
+
+}
+
+.zselect ul li {
+  display: table;
+  width: 100%;
+  padding: 4px 0.70rem 0px 0.70rem;
+  font-size: 0.9rem;
+}
+
+.zselect ul li span {
+
+}
+
+.zselect ul li.disabled {
+  color: #808080;
+}
+
+.zselect ul li:hover {
+  background-color: @bgColorHover;
+  color: #fff;
+}
+
+.zselect ul li.zmsfilter,
+.zselect ul li.zmsfilter:hover,
+.zselect ul li.filterResult,
+.zselect ul li.filterResult:hover,
+.zselect ul li.optgroup,
+.zselect ul li.optgroup:hover {
+  background-color: transparent;
+  color: #000;
+
+}
+
+.zselect ul li.zmsfilter input {
+  margin-bottom: 0.3rem;
+}
+
+.zselect ul li input[type='checkbox'] {
+  padding: 0;
+  margin: 0;
+  display: table-cell;
+  margin-right: 4px;
+}
+
+.zselect ul li.filterResult {
+  font-size: 0.8em;
+}
+
+.zselect ul li.optgroup {
+  font-weight: bold;
+  cursor: pointer !important;
+}
+
+.zselect > * {
+  cursor: default !important;
+}
+
+.zselect ul li.selectall {
+}
+
+.zselect ul li.deselectall {
+}
