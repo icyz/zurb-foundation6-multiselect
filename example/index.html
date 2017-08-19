@@ -1,0 +1,345 @@
+<!doctype html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZMultiSelect Foundation 6</title>
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <!-- ZMULTISELECT -->
+    <link rel="stylesheet" href="../dist/zmultiselect.min.css">
+
+
+    <style>
+        .prettyprint{
+            border: 0 !important;
+        }
+        .fn{
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="grid-container">
+    <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+            <h1>ZMultiSelect Foundation 6 // Example + Docs</h1>
+        </div>
+
+        <div class="large-2 cell">
+            <h5>MultiSelect</h5>
+
+            <select id="menu">
+                <optgroup label="Foods">
+                    <option>Pizza</option>
+                    <option data-selected>Spaghetti</option>
+                    <option>Mozzarella</option>
+                    <option>Eggs</option>
+                    <option data-selected>Eggs 2</option>
+                    <option>Eggs 3</option>
+                </optgroup>
+                <optgroup label="Drinks">
+                    <option>Water</option>
+                    <option>Beer</option>
+                    <option>Coke</option>
+                    <option>Gin</option>
+                </optgroup>
+            </select>
+
+        </div>
+
+        <div class="large-6 cell">
+            <h5>Options selected (live)</h5>
+            <textarea style="height:80px;" id="menu_live" placeholder="#menu_live"></textarea>
+
+            <h5>Functions</h5>
+
+            <div class="fn">
+                <a class="button primary" id="getValue">getValue</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('getValue')</pre>
+            </div>
+
+            <div class="fn">
+                <a class="button primary" id="checkAll">checkAll</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('checkAll')</pre>
+            </div>
+
+            <div class="fn">
+                <a class="button primary" id="uncheckAll">uncheckAll</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('uncheckAll')</pre>
+            </div>
+
+            <div class="fn">
+                <a class="button primary" id="disableAll">disableAll</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('disableAll')</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="enableAll">enableAll</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('disableAll', false)</pre>
+            </div>
+
+            <div class="fn">
+                <a class="button primary" id="disablePizza">disable "Pizza"</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('disable', 'Pizza', true)</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="enablePizza">enable "Pizza"</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('disable', 'Pizza', true)</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="checkBeer">check "Beer"</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('set', 'Beer', true);</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="uncheckBeer">uncheck "Beer"</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('set', 'Beer', false);</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="addJD">add "JD" (checked)</a>
+                <a class="button primary" id="addScotch">add "Scotch"</a>
+                <a class="button primary" id="addVodka">add "Vodka" after "Pizza"</a>
+                <pre class="prettyprint">
+$("#addScotch").click(function(){
+    $("#menu").zmultiselect('add', {
+        value: 'Scotch',
+        text: 'Scotch',
+        checked: false
+    },
+    'append'); //[append | prepend | (after an id) for example: "Pizza"]
+});</pre>
+            </div>
+            <div class="fn">
+                <a class="button primary" id="destroyMozzarella">destroy "Mozzarella"</a>
+                <pre class="prettyprint">$("#menu").zmultiselect('destroy', 'Mozzarella');</pre>
+            </div>
+
+            <div style="padding-top:30px;">
+                <div>Open browser console and play with this:</div>
+                <pre class="prettyprint">$("#menu").zmultiselect('open')</pre>
+                <pre class="prettyprint">$("#menu").zmultiselect('close')</pre>
+            </div>
+            <div style="padding-top:30px;">
+                <div>For understand the <code>get</code> parameter:</div>
+                <a href="index.html?zmultiselect=Pizza,Spaghetti,Eggs%202,Eggs%203">index.html?zmultiselect=Pizza,Spaghetti,Eggs%202,Eggs%203</a>
+                <div>Simply select all values ​​passed through get field (in this case the field is named "zmultiselect")</div>
+            </div>
+
+        </div>
+
+
+        <div class="large-4 cell">
+            <h5>Code</h5>
+
+
+<pre class="prettyprint">
+&#x3C;select id=&#x22;menu&#x22;&#x3E;
+    &#x3C;optgroup label=&#x22;Foods&#x22;&#x3E;
+        &#x3C;option&#x3E;Pizza&#x3C;/option&#x3E;
+        &#x3C;option data-selected&#x3E;Spaghetti&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Mozzarella&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Eggs&#x3C;/option&#x3E;
+        &#x3C;option data-selected&#x3E;Eggs 2&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Eggs 3&#x3C;/option&#x3E;
+    &#x3C;/optgroup&#x3E;
+    &#x3C;optgroup label=&#x22;Drinks&#x22;&#x3E;
+        &#x3C;option&#x3E;Water&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Beer&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Coke&#x3C;/option&#x3E;
+        &#x3C;option&#x3E;Gin&#x3C;/option&#x3E;
+    &#x3C;/optgroup&#x3E;
+&#x3C;/select&#x3E;
+
+&#x3C;script&#x3E;
+$(&#x22;#menu&#x22;).zmultiselect({
+
+    filter: true,
+    filterResult: true,
+    selectAll: true,
+    //locale: &#x27;it-IT&#x27;,
+
+    //REPLACE WITH CUSTOM TEXT:
+    //selectAllText: [&#x27;Check All&#x27;, &#x27;Uncheck All&#x27;],
+    //selectedText: [&#x27;Selected&#x27;, &#x27;of&#x27;],
+    //filterPlaceholder: &#x27;What are your searching for?&#x27;,
+    //filterResultText: &#x22;Showed&#x22;,
+    //filterPlaceholder: &#x27;MyFilter...&#x27;,
+
+    //get: &#x22;zmultiselect&#x22;,
+    placeholder: &#x22;My pretty zurb MultiSelect&#x22;,
+    live: &#x27;#menu_live&#x27;
+});
+&#x3C;/script&#x3E;
+
+</pre>
+
+
+        </div>
+
+
+    </div>
+
+
+    <div class="grid-x grid-padding-x" style="margin-top:40px;">
+        <div class="small-2 cell">
+            <h5>Italian Language</h5>
+            <select id="menu_it">
+                <optgroup label="Foods">
+                    <option>Pizza</option>
+                    <option>Spaghetti</option>
+                    <option>Mozzarella</option>
+                    <option>Eggs</option>
+                    <option>Eggs 2</option>
+                    <option>Eggs 3</option>
+                </optgroup>
+                <optgroup label="Drinks">
+                    <option>Water</option>
+                    <option>Beer</option>
+                    <option>Coke</option>
+                    <option>Gin</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="small-6 cell">
+            <h5>Options selected (live)</h5>
+            <textarea style="height:80px;" id="menu_live_it" placeholder="#menu_live_it"></textarea>
+        </div>
+        <div class="small-4 cell">
+            <pre class="prettyprint">
+$(&#x22;#menu_it&#x22;).zmultiselect({
+    filter: true,
+    filterResult: true,
+    selectAll: true,
+    locale: &#x27;it-IT&#x27;,
+
+    placeholder: &#x22;MultiSelect ITA&#x22;,
+    live: &#x22;#menu_live_it&#x22;
+});
+            </pre>
+        </div>
+
+        <div class="small-12 cell text-center">
+            <a href="http://www.fasys.it" target="_blank"><img style="padding:10px;" src="http://www.fasys.it/static/fasys_16_blu.png" alt="fasys.it"/></a>
+        </div>
+
+    </div>
+
+
+</div>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+<script src="js/vendor/jquery.js"></script>
+<script src="js/vendor/what-input.js"></script>
+<script src="js/vendor/foundation.js"></script>
+<script src="js/app.js"></script>
+
+
+<!-- ZMULTISELECT -->
+<script src="../dist/i18n/it-IT.min.js"></script><!-- for italian language -->
+<script src="../dist/zmultiselect.min.js"></script>
+<script>
+    $("#menu").zmultiselect({
+
+        filter: true,
+        filterResult: true,
+        selectAll: true,
+        //locale: 'it-IT',
+
+        //REPLACE WITH CUSTOM TEXT:
+        //selectAllText: ['Check All', 'Uncheck All'],
+        //selectedText: ['Selected', 'of'],
+        //filterPlaceholder: 'What are your searching for?',
+        //filterResultText: "Showed",
+        //filterPlaceholder: 'MyFilter...',
+
+        get: "zmultiselect",
+        placeholder: "I'm a MultiSelect",
+        live: '#menu_live'
+    });
+
+
+    $("#menu_it").zmultiselect({
+
+        filter: true,
+        filterResult: true,
+        selectAll: true,
+        locale: 'it-IT',
+
+        //REPLACE WITH CUSTOM TEXT:
+        //selectAllText: ['Check All', 'Uncheck All'],
+        //selectedText: ['Selected', 'of'],
+        //filterPlaceholder: 'What are your searching for?',
+        //filterResultText: "Showed",
+        //filterPlaceholder: 'MyFilter...',
+
+        placeholder: "MultiSelect ITA",
+        live: "#menu_live_it"
+    });
+
+
+    //play with ...
+    $("#getValue").click(function(){
+        alert( $("#menu").zmultiselect('getValue') );
+    });
+
+    $("#checkAll").click(function(){
+        $("#menu").zmultiselect('checkAll');
+    });
+    $("#uncheckAll").click(function(){
+        $("#menu").zmultiselect('uncheckAll');
+    });
+
+    $("#disableAll").click(function(){
+        $("#menu").zmultiselect('disableAll');
+    });
+    $("#enableAll").click(function(){
+        $("#menu").zmultiselect('disableAll', false);
+    });
+
+    $("#disablePizza").click(function(){
+        $("#menu").zmultiselect('disable', 'Pizza', true);
+    });
+    $("#enablePizza").click(function(){
+        $("#menu").zmultiselect('disable', 'Pizza', false);
+    });
+
+    $("#checkBeer").click(function(){
+        $("#menu").zmultiselect('set', 'Beer', true);
+    });
+    $("#uncheckBeer").click(function(){
+        $("#menu").zmultiselect('set', 'Beer', false);
+    });
+
+    $("#addJD").click(function(){
+        $("#menu").zmultiselect('add', {
+            value: 'JD',
+            text: 'Jack Daniels',
+            checked: true
+        },
+        'append'); //[append | prepend | <after id> for example: "Pizza"]
+    });
+    $("#addScotch").click(function(){
+        $("#menu").zmultiselect('add', {
+            value: 'Scotch',
+            text: 'Scotch',
+            checked: false
+        },
+        'append'); //[append | prepend | <after id> for example: "Pizza"]
+    });
+    $("#addVodka").click(function(){
+        $("#menu").zmultiselect('add', {
+                value: 'Vodka',
+                text: 'Vodka',
+                checked: false
+            },
+            'Pizza'); //[append | prepend | <after id> for example: "Pizza"]
+    });
+
+    $("#destroyMozzarella").click(function() {
+        $("#menu").zmultiselect('destroy', 'Mozzarella');
+    });
+</script>
+
+</body>
+</html>
