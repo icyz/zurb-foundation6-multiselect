@@ -48,26 +48,41 @@ THE SOFTWARE.
         }
     );
 
-
-
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
     $(document).on('click', function (e) {
         var id = false;
         if (e.target.tagName == 'SPAN') {
             id = $(e.target).parent().attr('id');
         }
-        if (e.target.tagName == 'DIV') {
+        else if (e.target.tagName == 'DIV') {
             id = $(e.target).attr('id');
+        }
+        else if (e.target.tagName == 'INPUT') {
+            if($(e.target).hasClass('zmsfilter_input')){
+                return;
+            }
         }
 
         var container = $(".zselect ul");
+
+        /*
+        //debug
+        console.log("id");
+        console.log(id);
+
+        console.log("target");
+        console.log(e.target);
+        console.log("container");
+        console.log(container);
+        */
+
 
         if (container.parent().is(e.target) || container.prev().is(e.target) || ( container.is(':visible') && !container.parent().is(e.target) ) && ( container.has(e.target).length === 0 )) {
             if (!id) container.hide(); //when user click out
             else {
                 $(".zselect#" + id + " ul").toggle();
-                setTimeout(function () { //jquery focus bug workaround
-                    $(".zselect#" + id + " ul li.zmsfilter input").focus();
+                setTimeout(function() { //jquery focus bug workaround
+                        $(".zselect#" + id + " ul li.zmsfilter input").focus();
                 }, 1);
             }
         }
@@ -77,9 +92,10 @@ THE SOFTWARE.
 
     //escape key for close all zselect
     $(window).on('keydown', function (e) {
+        console.log('FN 2');
         e = e || window.event;
         if (e.keyCode === 27) {
-            $("li.zmsfilter input").val('').keyup(); //clean filter
+            $("li.zmsfilter input").val('').keyup(); //clear filter
             $(".zselect ul").hide();
         }
     });
@@ -87,6 +103,7 @@ THE SOFTWARE.
 
     //click on label toggle input
     $(document).on('click', '.zselect li, .zselect li input:checkbox', function (e) {
+        console.log('FN 3');
         var zbeforeChangeEvent = $.Event('zbefore_change', {'target': e.target});
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
@@ -119,6 +136,8 @@ THE SOFTWARE.
 
     //optgroup
     $(document).on('click', '.optgroup', function () {
+        console.log('FN 5');
+
         var zbeforeOptgroupEvent = $.Event('zbeforeOptgroupEvent');
         $(this).trigger(zbeforeOptgroupEvent);
         if (zbeforeOptgroupEvent.result === false) {
@@ -146,7 +165,9 @@ THE SOFTWARE.
     }
 
     $(window).resize(function () {
-        onResize();
+        if(!('ontouchstart' in window)) {
+            onResize();
+        }
     });
 
 
@@ -195,11 +216,12 @@ THE SOFTWARE.
                 locale = $.zmultiselect_i18n.default;
             }
             //console.log(locale);
-            options.selectedText = options.selectedText || [locale['Selected'], locale['of']];
-            options.filter = options.filter || true;
-            options.filterResult = options.filterResult || true;
-            options.selectAll = options.selectAll || true;
 
+            //defaults
+            options.selectedText = options.selectedText || [locale['Selected'], locale['of']];
+            options.filter = (options.filter === undefined) ? true : options.filter;
+            options.filterResult = (options.filterResult === undefined) ? true : options.filterResult;
+            options.selectAll = (options.selectAll  === undefined) ? true : options.selectAll;
 
             $.each($(this), function (k, v) {
 
@@ -281,7 +303,7 @@ THE SOFTWARE.
                 var fplaholder = (options.filterPlaceholder !== undefined) ? options.filterPlaceholder : locale['Search'];
 
                 var rel = this.attr('rel');
-                $("div#" + rel + " ul").prepend('<li class="zmsfilter"><input type="text" placeholder="' + fplaholder + '" /></li>');
+                $("div#" + rel + " ul").prepend('<li class="zmsfilter"><input type="text" class="zmsfilter_input" placeholder="' + fplaholder + '" /></li>');
 
                 if (options.filterResult === true)
                     $("div#" + rel + " ul").append('<li class="filterResult"></li>');
