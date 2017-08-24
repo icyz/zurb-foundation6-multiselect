@@ -34,20 +34,19 @@ THE SOFTWARE.
 ( function ($) {
     'use strict';
 
-    $.zmultiselect = $.extend($.zmultiselect, {
-        i18n:
-            {
-                "it-IT":
-                    {
-                        "Check all": "Seleziona tutto",
-                        "Uncheck all": "Deseleziona tutto",
-                        "Search": "Cerca...",
-                        "Selected": "Selezionati",
-                        "of": "di",
-                        "showed": "Visualizzati"
-                    }
-            }
-    });
+    $.zmultiselect_i18n = $.extend(($.zmultiselect_i18n || {}),
+        {
+            "it-IT":
+                {
+                    "Check all": "Seleziona tutto",
+                    "Uncheck all": "Deseleziona tutto",
+                    "Search": "Cerca...",
+                    "Selected": "Selezionati",
+                    "of": "di",
+                    "showed": "Visualizzati"
+                }
+        }
+    );
 
 
 }(jQuery) );

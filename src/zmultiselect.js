@@ -34,22 +34,21 @@ THE SOFTWARE.
 (function ($) {
     "use strict";
 
-    $.zmultiselect = $.extend({},
+    $.zmultiselect_i18n = $.extend(($.zmultiselect_i18n || {}),
         {
-            i18n:
+            default:
                 {
-                    default:
-                        {
-                            'Check all': 'Check all',
-                            'Uncheck all': 'Uncheck all',
-                            'Search': 'Search...',
-                            'Selected': 'Selected',
-                            'of': 'of',
-                            'showed': 'Showed',
-                        }
+                    'Check all': 'Check all',
+                    'Uncheck all': 'Uncheck all',
+                    'Search': 'Search...',
+                    'Selected': 'Selected',
+                    'of': 'of',
+                    'showed': 'Showed',
                 }
         }
     );
+
+
 
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
     $(document).on('click', function (e) {
@@ -190,10 +189,10 @@ THE SOFTWARE.
             var locale;
 
             if (options.locale) {
-                locale = $.zmultiselect.i18n[options.locale];
+                locale = $.zmultiselect_i18n[options.locale];
             }
             if (typeof(locale) !== "object") {
-                locale = $.zmultiselect.i18n.default;
+                locale = $.zmultiselect_i18n.default;
             }
             //console.log(locale);
             options.selectedText = options.selectedText || [locale['Selected'], locale['of']];
