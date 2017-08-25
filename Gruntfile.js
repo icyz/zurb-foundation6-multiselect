@@ -102,6 +102,30 @@ module.exports = function(grunt) {
 
 
 
+        ftp_push: {
+            your_target: {
+                options: {
+                    host: "ftp.onlinux-it.setupdns.net",
+                    dest: "/public/www/andreamariani/lab/zurb-foundation6-multiselect/",
+                    port: 21,
+                    username: grunt.option('ftp-user'),
+                    password: grunt.option('ftp-pass')
+                },
+                files: [
+                    {
+                        expand: true,
+                        cwd: '.',
+                        src: [
+                            "dist/**",
+                            "docs-example/**",
+                            "src/**",
+                            "LICENSE",
+                            "README.md",
+                        ]
+                    }
+                ]
+            }
+        }
 
 
 
@@ -111,6 +135,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
+    grunt.loadNpmTasks('grunt-ftp-push');
 
-    grunt.registerTask('default', ['less', 'cssmin', 'uglify']);
+
+
+    grunt.registerTask('default', ['less', 'cssmin', 'uglify', 'ftp_push']);
 };
