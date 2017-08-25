@@ -48,8 +48,9 @@ THE SOFTWARE.
         }
     );
 
+
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
-    $(document).on('click', function (e) {
+    $(document).on('click touchstart', function (e) {
         var id = false;
         if (e.target.tagName == 'SPAN') {
             id = $(e.target).parent().attr('id');
@@ -92,7 +93,6 @@ THE SOFTWARE.
 
     //escape key for close all zselect
     $(window).on('keydown', function (e) {
-        console.log('FN 2');
         e = e || window.event;
         if (e.keyCode === 27) {
             $("li.zmsfilter input").val('').keyup(); //clear filter
@@ -103,7 +103,6 @@ THE SOFTWARE.
 
     //click on label toggle input
     $(document).on('click', '.zselect li, .zselect li input:checkbox', function (e) {
-        console.log('FN 3');
         var zbeforeChangeEvent = $.Event('zbefore_change', {'target': e.target});
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
@@ -136,8 +135,6 @@ THE SOFTWARE.
 
     //optgroup
     $(document).on('click', '.optgroup', function () {
-        console.log('FN 5');
-
         var zbeforeOptgroupEvent = $.Event('zbeforeOptgroupEvent');
         $(this).trigger(zbeforeOptgroupEvent);
         if (zbeforeOptgroupEvent.result === false) {
@@ -279,7 +276,7 @@ THE SOFTWARE.
                     else appendTo = '#' + id + ' ul div.optgroup_' + optgroupId;
 
 
-                    $(appendTo).append("<li " + disabledClass + "><input value='" + $(z).val() + "' type='checkbox' " + checked + " " + disabled + " " + dataZ + " /><span style=\"width:100%;display:table-cell;\">" + $(z).text() + "</span></li>");
+                    $(appendTo).append("<li " + disabledClass + "><input value='" + $(z).val() + "' type='checkbox' " + checked + " " + disabled + " " + dataZ + " /><span style=\"cursor:pointer;width:100%;display:table-cell;\">" + $(z).text() + "</span></li>");
 
                     if (optgroupMembers === j + 1) {
                         optgroupSize = 0;

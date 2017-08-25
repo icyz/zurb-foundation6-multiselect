@@ -82,6 +82,7 @@
   font-weight: bold;
   cursor: pointer !important;
 }
-.zselect > * {
-  cursor: default !important;
+.zselect ul li.selectall,
+.zselect ul li.deselectall {
+  cursor: pointer!important;
 }
