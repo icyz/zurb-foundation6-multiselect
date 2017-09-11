@@ -235,26 +235,79 @@ $(&#x22;#menu_it&#x22;).zmultiselect({
             </pre>
         </div>
 
-        <div class="small-12 cell">
-          <div id="disqus_thread"></div>
-<script>
+    </div>
 
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://zurb-foundation-6-multiselect.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+    <div class="grid-x grid-padding-x" style="margin-top:40px;">
+        <div class="large-2 medium-12 small-12 cell">
+            <h5>Popperjs</h5>
+            <select id="menu_it_popper">
+                <optgroup label="Foods">
+                    <option>Pizza</option>
+                    <option>Spaghetti</option>
+                    <option>Mozzarella</option>
+                </optgroup>
+                <optgroup label="Drinks">
+                    <option>Beer</option>
+                    <option>Gin</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="large-6 medium-12 small-12 cell">
+            <h5>Options selected (live)</h5>
+            <textarea style="height:80px;" id="menu_live_popper_it" placeholder="#menu_live_popper_it"></textarea>
+        </div>
+        <div class="large-4 medium-12 small-12 cell">
+            <pre class="prettyprint">
+$(&#x22;#menu_it_popper&#x22;).zmultiselect({
+    filter: false,
+    filterResult: true,
+    selectAll: true,
+    locale: &#x27;it-IT&#x27;,
+
+    placeholder: &#x22;MultiSelect ITA&#x22;,
+    live: &#x22;#menu_live_popper_it&#x22;,
+
+    plugins: {
+        popperjs: 'top'
+    }
+});
+            </pre>
+        </div>
+
+    </div>
+
+
+    <div class="grid-x grid-padding-x" style="margin-top:40px;">
+
+        <!--
+        <div class="small-12 cell">
+            <div id="disqus_thread"></div>
+            <script>
+
+                (function() { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+                    s.src = 'https://zurb-foundation-6-multiselect.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
         </div>
+        -->
 
         <div class="small-12 cell text-center">
             <a href="http://www.fasys.it" target="_blank"><img style="padding:10px;" src="http://www.fasys.it/static/fasys_16_blu.png" alt="fasys.it"/></a>
         </div>
 
     </div>
+
+
+
+
 
 
 </div>
@@ -265,6 +318,8 @@ s.setAttribute('data-timestamp', +new Date());
 <script src="js/vendor/foundation.js"></script>
 <script src="js/app.js"></script>
 
+<!-- POPPERJS -->
+<script src="https://unpkg.com/popper.js@1.12.5/dist/umd/popper.js"></script>
 
 <!-- ZMULTISELECT -->
 <script src="../dist/i18n/it-IT.min.js"></script><!-- for italian language -->
@@ -306,6 +361,22 @@ s.setAttribute('data-timestamp', +new Date());
 
         placeholder: "MultiSelect ITA",
         live: "#menu_live_it"
+    });
+
+
+    $("#menu_it_popper").zmultiselect({
+
+        filter: false,
+        filterResult: false,
+        selectAll: true,
+        locale: 'it-IT',
+
+        placeholder: "MS + POPPER",
+        live: "#menu_live_popper_it",
+
+        plugins:{
+            popperjs: 'top'
+        }
     });
 
 
