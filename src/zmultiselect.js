@@ -84,20 +84,18 @@ THE SOFTWARE.
             if (!id) container.hide(); //when user click out
             else {
 
-
+                //popperjs integration
+                if($(".zselect#" + id).attr('popperjs')) {
+                    zmspopper[id].scheduleUpdate();
+                }
 
                 $(".zselect#" + id + " ul").toggle();
                 setTimeout(function() { //jquery focus bug workaround
-                        $(".zselect#" + id + " ul li.zmsfilter input").focus();
+                    $(".zselect#" + id + " ul li.zmsfilter input").focus();
                 }, 1);
             }
         }
 
-
-        //popperjs integration
-        if($(".zselect#" + id).attr('popperjs')) {
-            zmspopper[id].scheduleUpdate();
-        }
 
     });
 
@@ -312,12 +310,16 @@ THE SOFTWARE.
                                     $(data.instance.reference).find('ul').offset({
                                         left: $(data.instance.reference).offset().left
                                     });
+
+                                    /*
+                                     * FIXME: border-top
                                     if ($("#" + id + "_ul").is(":visible") && data.placement === 'top') {
                                         $("#" + id).css('border-top', '0');
                                     }
                                     else{
                                         $("#" + id).css('border-top', '1px solid #ccc');
                                     }
+                                    */
                                 }
                             });
                         }

@@ -103,7 +103,7 @@ module.exports = function(grunt) {
 
 
         ftp_push: {
-            your_target: {
+            update: {
                 options: {
                     host: "ftp.fasys.it",
                     dest: "/public_html/andreamariani/lab/zurb-foundation6-multiselect/",
