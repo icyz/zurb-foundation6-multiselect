@@ -313,7 +313,6 @@ THE SOFTWARE.
                                         left: $(data.instance.reference).offset().left
                                     });
                                     if ($("#" + id + "_ul").is(":visible") && data.placement === 'top') {
-                                        console.log('yyyy');
                                         $("#" + id).css('border-top', '0');
                                     }
                                     else{
