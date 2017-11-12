@@ -34,6 +34,11 @@ THE SOFTWARE.
 (function ($) {
     "use strict";
 
+    var clickEvent = "click";
+    if ('ontouchstart' in document.documentElement) {
+        clickEvent = "touchstart";
+    }
+
     $.zmultiselect_i18n = $.extend(($.zmultiselect_i18n || {}),
         {
             default:
@@ -50,7 +55,7 @@ THE SOFTWARE.
 
 
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
-    $(document).on('click touchstart', function (e) {
+    $(document).on(clickEvent, function (e) {
         var id = false;
         if (e.target.tagName == 'SPAN') {
             id = $(e.target).parent().attr('id');
@@ -66,16 +71,16 @@ THE SOFTWARE.
 
         var container = $(".zselect ul");
 
-        /*
+
         //debug
+        console.log("-----------");
         console.log("id");
         console.log(id);
 
-        console.log("target");
-        console.log(e.target);
-        console.log("container");
-        console.log(container);
-        */
+        console.log("target", e.target);
+        console.log("container", container);
+        console.log("-----------");
+
 
 
         if (container.parent().is(e.target) || container.prev().is(e.target) || ( container.is(':visible') && !container.parent().is(e.target) ) && ( container.has(e.target).length === 0 )) {
@@ -102,7 +107,7 @@ THE SOFTWARE.
 
 
     //click on label toggle input
-    $(document).on('click', '.zselect li, .zselect li input:checkbox', function (e) {
+    $(document).on(clickEvent, '.zselect li, .zselect li input:checkbox', function (e) {
         var zbeforeChangeEvent = $.Event('zbefore_change', {'target': e.target});
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
@@ -127,14 +132,14 @@ THE SOFTWARE.
 
 
     //select all and deselect all
-    $(document).on('click', '.selectall,.deselectall', function () {
+    $(document).on(clickEvent, '.selectall,.deselectall', function () {
         var parent = $(this).parent().find("input:checkbox[disabled!='disabled']:visible");
         parent.prop('checked', (($(this).hasClass('selectall')) ? true : false));
         parent.eq('0').change();
     });
 
     //optgroup
-    $(document).on('click', '.optgroup', function () {
+    $(document).on(clickEvent, '.optgroup', function () {
         var zbeforeOptgroupEvent = $.Event('zbeforeOptgroupEvent');
         $(this).trigger(zbeforeOptgroupEvent);
         if (zbeforeOptgroupEvent.result === false) {

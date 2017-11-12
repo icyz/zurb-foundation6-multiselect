@@ -103,10 +103,10 @@ module.exports = function(grunt) {
 
 
         ftp_push: {
-            your_target: {
+            web: {
                 options: {
-                    host: "ftp.onlinux-it.setupdns.net",
-                    dest: "/public/www/andreamariani/lab/zurb-foundation6-multiselect/",
+                    host: "ftp.fasys.it",
+                    dest: "/public_html/andreamariani/lab/zurb-foundation6-multiselect/",
                     port: 21,
                     username: grunt.option('ftp-user'),
                     password: grunt.option('ftp-pass')
