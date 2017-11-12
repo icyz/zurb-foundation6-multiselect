@@ -53,6 +53,8 @@ THE SOFTWARE.
         }
     );
 
+    var zmspopper = [];
+
 
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
     $(document).on(clickEvent, function (e) {
@@ -71,7 +73,7 @@ THE SOFTWARE.
 
         var container = $(".zselect ul");
 
-
+        /*
         //debug
         console.log("-----------");
         console.log("id");
@@ -80,18 +82,25 @@ THE SOFTWARE.
         console.log("target", e.target);
         console.log("container", container);
         console.log("-----------");
-
+        */
 
 
         if (container.parent().is(e.target) || container.prev().is(e.target) || ( container.is(':visible') && !container.parent().is(e.target) ) && ( container.has(e.target).length === 0 )) {
             if (!id) container.hide(); //when user click out
             else {
+
+                //popperjs integration
+                if($(".zselect#" + id).attr('popperjs')) {
+                    zmspopper[id].scheduleUpdate();
+                }
+
                 $(".zselect#" + id + " ul").toggle();
                 setTimeout(function() { //jquery focus bug workaround
-                        $(".zselect#" + id + " ul li.zmsfilter input").focus();
+                    $(".zselect#" + id + " ul li.zmsfilter input").focus();
                 }, 1);
             }
         }
+
 
     });
 
@@ -225,11 +234,16 @@ THE SOFTWARE.
             options.filterResult = (options.filterResult === undefined) ? true : options.filterResult;
             options.selectAll = (options.selectAll  === undefined) ? true : options.selectAll;
 
+
+            options.plugins = options.plugins || {};
+            options.plugins.popperjs = options.plugins.popperjs || false;
+
             $.each($(this), function (k, v) {
 
                 id = Math.random().toString(36).substr(2, 9);
+
                 $(v).hide().attr('rel', id).addClass('zms');
-                $(v).parent().append("<div id='" + id + "' class='zselect'><span class='zmshead'></span><ul></ul></div>");
+                $(v).parent().append("<div id='" + id + "' class='zselect' "+ ((options.plugins.popperjs) ? "popperjs='"+ options.plugins.popperjs +"'" : "") +" ><span class='zmshead'></span><ul id='"+id+"_ul'></ul></div>");
 
                 if (options.selectAll) {
                     var sAllText = locale['Check all'];
@@ -239,9 +253,8 @@ THE SOFTWARE.
                         desAllText = options.selectAllText[1];
                     }
 
-                    var desAllFA = "", sAllFA = "";
-                    $('#' + id + ' ul').append("<li class='selectall'>" + sAllFA + sAllText + "</li>");
-                    $('#' + id + ' ul').append("<li class='deselectall'>" + desAllFA + desAllText + "</li>");
+                    $('#' + id + ' ul').append("<li class='selectall'>" + sAllText + "</li>");
+                    $('#' + id + ' ul').append("<li class='deselectall'>" + desAllText + "</li>");
                 }
 
                 _live = "";
@@ -289,8 +302,41 @@ THE SOFTWARE.
                         optgroupName = false;
                     }
 
-
                 });
+
+
+                //Popperjs integration
+                if(options.plugins.popperjs) {
+                    if(options.plugins.popperjs === 'top' || options.plugins.popperjs === 'bottom') {
+                        if (typeof(Popper) === 'function') {
+                            zmspopper[id] = new Popper($("#" + id), $("#" + id + "_ul"), {
+                                placement: options.plugins.popperjs,
+                                onUpdate: function (data) {
+                                    $(data.instance.reference).find('ul').offset({
+                                        left: $(data.instance.reference).offset().left
+                                    });
+
+                                    /*
+                                     * FIXME: border-top
+                                    if ($("#" + id + "_ul").is(":visible") && data.placement === 'top') {
+                                        $("#" + id).css('border-top', '0');
+                                    }
+                                    else{
+                                        $("#" + id).css('border-top', '1px solid #ccc');
+                                    }
+                                    */
+                                }
+                            });
+                        }
+                        else{
+                            console.warn('Popperjs REQUIRED: http://popper.js.org');
+                        }
+                    }
+                    else{
+                        console.warn('plugins.popperjs accepts only `top` or `bottom` values');
+                    }
+                }
+
 
                 if (options.live !== undefined) {
                     $(options.live).val(_live.substring(0, _live.length - 1));
