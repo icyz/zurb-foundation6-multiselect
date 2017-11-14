@@ -140,7 +140,7 @@ THE SOFTWARE.
     });
 
 
-    //select all and deselect all
+    //select all / deselect all
     $(document).on(clickEvent, '.selectall,.deselectall', function () {
         var parent = $(this).parent().find("input:checkbox[disabled!='disabled']:visible");
         parent.prop('checked', (($(this).hasClass('selectall')) ? true : false));
@@ -206,6 +206,7 @@ THE SOFTWARE.
                 //filterPlaceholder: 'What are your searching for?',
                 //filterResultText: "Showed",
                 //filterPlaceholder: 'MyFilter...',
+                //updateNativeSelect: false,
 
                 //get: "params",
                 //live: "#live",
@@ -233,6 +234,7 @@ THE SOFTWARE.
             options.filter = (options.filter === undefined) ? true : options.filter;
             options.filterResult = (options.filterResult === undefined) ? true : options.filterResult;
             options.selectAll = (options.selectAll  === undefined) ? true : options.selectAll;
+            options.updateNativeSelect = options.updateNativeSelect || false;
 
 
             options.plugins = options.plugins || {};
@@ -242,7 +244,7 @@ THE SOFTWARE.
 
                 id = Math.random().toString(36).substr(2, 9);
 
-                $(v).hide().attr('rel', id).addClass('zms');
+                $(v).hide().attr('data-rel', id).addClass('zms');
                 $(v).parent().append("<div id='" + id + "' class='zselect' "+ ((options.plugins.popperjs) ? "popperjs='"+ options.plugins.popperjs +"'" : "") +" ><span class='zmshead'></span><ul id='"+id+"_ul'></ul></div>");
 
                 if (options.selectAll) {
@@ -350,7 +352,7 @@ THE SOFTWARE.
                 if (options.filterResultText === undefined) options.filterResultText = locale['showed'];
                 var fplaholder = (options.filterPlaceholder !== undefined) ? options.filterPlaceholder : locale['Search'];
 
-                var rel = this.attr('rel');
+                var rel = this.data('rel');
                 $("div#" + rel + " ul").prepend('<li class="zmsfilter"><input type="text" class="zmsfilter_input" placeholder="' + fplaholder + '" /></li>');
 
                 if (options.filterResult === true)
@@ -381,9 +383,9 @@ THE SOFTWARE.
 
 
             if (options.live !== undefined) {
-                var rel = this.attr('rel');
+                var rel = this.data('rel');
                 $(".zselect#" + rel).on('change', 'input:checkbox', function (e) {
-                    $(options.live).val(methods.getValue($("select[rel='" + rel + "']")));
+                    $(options.live).val(methods.getValue($("select[data-rel='" + rel + "']")));
                 });
             }//end live
 
@@ -400,7 +402,7 @@ THE SOFTWARE.
                     }
                 }
                 if (need) {
-                    var rel = this.attr('rel');
+                    var rel = this.data('rel');
                     var _live = "";
                     for (var i = 0; i < need.length; i++) {
                         $(".zselect#" + rel + " ul li input:checkbox[value='" + decodeURI(need[i]) + "']").prop('checked', true);
@@ -420,16 +422,17 @@ THE SOFTWARE.
                 var container = $(this).closest('.zselect');
                 var rel = container.attr('id');
                 refreshPlaceholder(rel, options.placeholder, options.selectedText);
-                var select = $('select[rel=' + rel + ']');
 
-                $.each(container.find('input:checkbox'), function (k, v) {
-                    if ($(v).val() !== undefined) {
-                        select.find("option[value='" + $(v).val() + "']").prop("selected", $(v).prop('checked'));
-                    }
-                });
+                if(options.updateNativeSelect) {
+                    var select = $('select[data-rel=' + rel + ']');
+                    $.each(container.find('input:checkbox'), function (k, v) {
+                        if ($(v).val() !== undefined) {
+                            select.find("option[value='" + $(v).val() + "']").prop("selected", $(v).prop('checked'));
+                        }
+                    });
+                }
 
-                //select.trigger('change');
-                //console.timeEnd('A1');
+
             });
 
 
@@ -448,56 +451,50 @@ THE SOFTWARE.
             //console.log(selector);
             //console.log(options);
             var value = [];
-            var rel = $(selector).attr('rel');
+            var rel = $(selector).data('rel');
             $.each($("div#" + rel + " ul li input"), function (k, v) {
                 if ($(v).val() !== undefined) {
                     if ($(v).prop('checked'))
                         value.push($(v).val());
                 }
             });
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox:last").trigger('change');
-            methods._refreshLive($(this).attr('rel'));
+            $("div#" + $(this).data('rel') + " ul li input:checkbox:last").trigger('change');
+            methods._refreshLive($(this).data('rel'));
             return value;
         },
 
 
         open: function () {
-            $("div#" + $(this).attr('rel') + " ul").show();
+            $("div#" + $(this).data('rel') + " ul").show();
         },
         close: function () {
-            $("div#" + $(this).attr('rel') + " ul").hide();
+            $("div#" + $(this).data('rel') + " ul").hide();
         },
 
 
         disable: function (val, state) {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox[value='" + val + "']").prop("disabled", state);
+            $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").prop("disabled", state);
         },
 
         disableAll: function (state) {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox").prop("disabled", ((state !== undefined) ? state : true));
+            $("div#" + $(this).data('rel') + " ul li input:checkbox").prop("disabled", ((state !== undefined) ? state : true));
         },
-
-        /*
-        enableAll: function(){
-            methods.disableAll(true); //need pass rel
-        },
-        */
 
         set: function (val, checked) {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox[value='" + val + "']").prop('checked', checked).trigger('change');
+            $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").prop('checked', checked).trigger('change');
         },
 
         checkAll: function () {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox").prop('checked', true);
-            methods._refreshLive($(this).attr('rel'));
+            $("div#" + $(this).data('rel') + " ul li input:checkbox").prop('checked', true);
+            methods._refreshLive($(this).data('rel'));
         },
         uncheckAll: function () {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox").prop('checked', false);
-            methods._refreshLive($(this).attr('rel'));
+            $("div#" + $(this).data('rel') + " ul li input:checkbox").prop('checked', false);
+            methods._refreshLive($(this).data('rel'));
         },
         destroy: function (val) {
-            $("div#" + $(this).attr('rel') + " ul li input:checkbox[value='" + val + "']").parent().remove();
-            methods._refreshLive($(this).attr('rel'));
+            $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").parent().remove();
+            methods._refreshLive($(this).data('rel'));
         },
         reflow: function () {
             onResize(true);
@@ -519,23 +516,23 @@ THE SOFTWARE.
             var li = "<li " + disabledClass + "><input value='" + option.value + "' type='checkbox' " + checked + " " + disabled + " />&nbsp;" + option.text + "</li>";
 
             if (position === 'append') {
-                if ($("div#" + $(this).attr('rel') + " ul li.filterResult").length > 0) {
-                    $(li).insertBefore($("div#" + $(this).attr('rel') + " ul li.filterResult"));
+                if ($("div#" + $(this).data('rel') + " ul li.filterResult").length > 0) {
+                    $(li).insertBefore($("div#" + $(this).data('rel') + " ul li.filterResult"));
                 }
                 else {
-                    $("div#" + $(this).attr('rel') + " ul").append(li);
+                    $("div#" + $(this).data('rel') + " ul").append(li);
                 }
             }
             else {
                 if (position === 'prepend') {
-                    $(li).insertAfter($("div#" + $(this).attr('rel') + " ul li.deselectall"));
+                    $(li).insertAfter($("div#" + $(this).data('rel') + " ul li.deselectall"));
                 }
                 else {
-                    $(li).insertAfter($("div#" + $(this).attr('rel') + " ul li input[value='" + position + "']").closest('li'));
+                    $(li).insertAfter($("div#" + $(this).data('rel') + " ul li input[value='" + position + "']").closest('li'));
                 }
             }
 
-            methods._refreshLive($(this).attr('rel'));
+            methods._refreshLive($(this).data('rel'));
         }
 
         //,update : function( content ) {  }
