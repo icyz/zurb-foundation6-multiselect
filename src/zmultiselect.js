@@ -94,10 +94,14 @@ THE SOFTWARE.
                     zmspopper[id].scheduleUpdate();
                 }
 
+
                 $(".zselect#" + id + " ul").toggle();
-                setTimeout(function() { //jquery focus bug workaround
-                    $(".zselect#" + id + " ul li.zmsfilter input").focus();
-                }, 1);
+
+                if(clickEvent !== 'touchstart') {
+                    setTimeout(function () { //jquery focus bug workaround
+                        $(".zselect#" + id + " ul li.zmsfilter input").focus();
+                    }, 1);
+                }
             }
         }
 
