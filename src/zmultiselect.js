@@ -35,8 +35,24 @@ THE SOFTWARE.
     "use strict";
 
     var clickEvent = "click";
+    var timeout, longtouch;
+
     if ('ontouchstart' in document.documentElement) {
-        clickEvent = "touchstart";
+        //clickEvent = "touchstart";
+        clickEvent = "touchend";
+
+        $(document).on('touchstart', '.zselect', function() {
+            timeout = setTimeout(function() {
+                longtouch = true;
+            }, 200);
+        }).on('touchend',  '.zselect',  function() {
+            if (longtouch) {
+                //console.log('LongTouch!');
+            }
+            longtouch = false;
+            clearTimeout(timeout);
+        });
+
     }
 
     $.zmultiselect_i18n = $.extend(($.zmultiselect_i18n || {}),
@@ -55,9 +71,14 @@ THE SOFTWARE.
 
     var zmspopper = [];
 
-
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
     $(document).on(clickEvent, function (e) {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var id = false;
         if (e.target.tagName == 'SPAN') {
             id = $(e.target).parent().attr('id');
@@ -109,7 +130,7 @@ THE SOFTWARE.
     });
 
 
-    //escape key for close all zselect
+        //escape key for close all zselect
     $(window).on('keydown', function (e) {
         e = e || window.event;
         if (e.keyCode === 27) {
@@ -119,8 +140,17 @@ THE SOFTWARE.
     });
 
 
+
+    var scroll;
+
     //click on label toggle input
     $(document).on(clickEvent, '.zselect li, .zselect li input:checkbox', function (e) {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var zbeforeChangeEvent = $.Event('zbefore_change', {'target': e.target});
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
@@ -146,6 +176,12 @@ THE SOFTWARE.
 
     //select all / deselect all
     $(document).on(clickEvent, '.selectall,.deselectall', function () {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var parent = $(this).parent().find("input:checkbox[disabled!='disabled']:visible");
         parent.prop('checked', (($(this).hasClass('selectall')) ? true : false));
         parent.eq('0').change();
@@ -153,6 +189,12 @@ THE SOFTWARE.
 
     //optgroup
     $(document).on(clickEvent, '.optgroup', function () {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var zbeforeOptgroupEvent = $.Event('zbeforeOptgroupEvent');
         $(this).trigger(zbeforeOptgroupEvent);
         if (zbeforeOptgroupEvent.result === false) {
