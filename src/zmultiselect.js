@@ -281,6 +281,9 @@ THE SOFTWARE.
 
             }
             */
+
+            if($(this).attr('zms-loaded')) return;
+
             var id, checked, dataZ, disabled = "", disabledClass = "";
             var optgroup = [];
             var optgroupSize, optgroupId = 0;
@@ -505,6 +508,8 @@ THE SOFTWARE.
 
 
             onResize(id);
+            
+            $(this).attr('zms-loaded', true);
 
             if(options.onLoad) options.onLoad(id);
 
