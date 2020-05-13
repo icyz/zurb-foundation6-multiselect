@@ -211,7 +211,6 @@ THE SOFTWARE.
 
     //when resize window + init
     function onResize(id) {
-        id = id || false;
         if(id) {
             var v = $('#' + id);
             v.find("ul").attr('style', 'width:' + v.outerWidth() + 'px!important;');
@@ -242,7 +241,7 @@ THE SOFTWARE.
                 setTimeout(resizeend, resize_delta);
             } else {
                 resize_timeout = false;
-                onResize();
+                onResize(false);
             }
         }
     };
@@ -416,13 +415,15 @@ THE SOFTWARE.
                 refreshPlaceholder(id, options.placeholder, options.selectedText);
             });
 
+            var rel = this.data('rel');
+
             if (options.filter === true) {
                 //defaults
                 if (options.filterResult === undefined) options.filterResult = true;
                 if (options.filterResultText === undefined) options.filterResultText = locale['showed'];
                 var fplaholder = (options.filterPlaceholder !== undefined) ? options.filterPlaceholder : locale['Search'];
 
-                var rel = this.data('rel');
+
                 $("div#" + rel + " ul").prepend('<li class="zmsfilter"><input type="text" class="zmsfilter_input" placeholder="' + fplaholder + '" /></li>');
 
                 if (options.filterResult === true)
@@ -453,7 +454,6 @@ THE SOFTWARE.
 
 
             if (options.live !== undefined) {
-                var rel = this.data('rel');
                 $(".zselect#" + rel).on('change', 'input:checkbox', function (e) {
                     $(options.live).val(methods.getValue($("select[data-rel='" + rel + "']")));
                     if(options.onChange) options.onChange(rel, $(options.live).val());
@@ -473,7 +473,6 @@ THE SOFTWARE.
                     }
                 }
                 if (need) {
-                    var rel = this.data('rel');
                     var _live = "";
                     for (var i = 0; i < need.length; i++) {
                         $(".zselect#" + rel + " ul li input:checkbox[value='" + decodeURI(need[i]) + "']").prop('checked', true);
@@ -507,8 +506,8 @@ THE SOFTWARE.
             });
 
 
-            onResize(id);
-            
+            onResize(rel);
+
             $(this).attr('zms-loaded', true);
 
             if(options.onLoad) options.onLoad(id);
@@ -568,9 +567,13 @@ THE SOFTWARE.
             $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").parent().remove();
             methods._refreshLive($(this).data('rel'));
         },
-        reflow: function () {
-            onResize($(this).attr('id'));
-            $(".zselect#" + $(this).attr('id') + " input:first").trigger('change'); //serve per rimettere il placeholder ed il campo live
+        reflow: function(id) {
+            id = id || false;
+            onResize(id);
+
+            if(id) {
+                $(".zselect#" + $(this).attr('id') + " input:first").trigger('change'); //serve per rimettere il placeholder ed il campo live
+            }
         },
 
         add: function (option, pos) {
