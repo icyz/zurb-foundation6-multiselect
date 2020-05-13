@@ -35,8 +35,24 @@ THE SOFTWARE.
     "use strict";
 
     var clickEvent = "click";
+    var timeout, longtouch;
+
     if ('ontouchstart' in document.documentElement) {
-        clickEvent = "touchstart";
+        //clickEvent = "touchstart";
+        clickEvent = "touchend";
+
+        $(document).on('touchstart', '.zselect', function() {
+            timeout = setTimeout(function() {
+                longtouch = true;
+            }, 200);
+        }).on('touchend',  '.zselect',  function() {
+            if (longtouch) {
+                //console.log('LongTouch!');
+            }
+            longtouch = false;
+            clearTimeout(timeout);
+        });
+
     }
 
     $.zmultiselect_i18n = $.extend(($.zmultiselect_i18n || {}),
@@ -55,9 +71,14 @@ THE SOFTWARE.
 
     var zmspopper = [];
 
-
     //toggle for click on zselect, close for click elsewhere, nothing for click on .zselect *
     $(document).on(clickEvent, function (e) {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var id = false;
         if (e.target.tagName == 'SPAN') {
             id = $(e.target).parent().attr('id');
@@ -121,6 +142,12 @@ THE SOFTWARE.
 
     //click on label toggle input
     $(document).on(clickEvent, '.zselect li, .zselect li input:checkbox', function (e) {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var zbeforeChangeEvent = $.Event('zbefore_change', {'target': e.target});
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
@@ -146,6 +173,11 @@ THE SOFTWARE.
 
     //select all / deselect all
     $(document).on(clickEvent, '.selectall,.deselectall', function () {
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var parent = $(this).parent().find("input:checkbox[disabled!='disabled']:visible");
         parent.prop('checked', (($(this).hasClass('selectall')) ? true : false));
         parent.eq('0').change();
@@ -153,6 +185,12 @@ THE SOFTWARE.
 
     //optgroup
     $(document).on(clickEvent, '.optgroup', function () {
+
+        if(longtouch){
+            longtouch = false;
+            return;
+        }
+
         var zbeforeOptgroupEvent = $.Event('zbeforeOptgroupEvent');
         $(this).trigger(zbeforeOptgroupEvent);
         if (zbeforeOptgroupEvent.result === false) {
@@ -172,18 +210,43 @@ THE SOFTWARE.
 
 
     //when resize window + init
-    function onResize(reflow) {
-        $.each($(".zselect"), function (k, v) {
-            $(v).find("ul").attr('style', 'width:' + $(v).outerWidth() + 'px!important;');
-        });
-
+    function onResize(id) {
+        id = id || false;
+        if(id) {
+            var v = $('#' + id);
+            v.find("ul").attr('style', 'width:' + v.outerWidth() + 'px!important;');
+        }
+        else {
+            $.each($(".zselect"), function (k, v) {
+                $(v).find("ul").attr('style', 'width:' + $(v).outerWidth() + 'px!important;');
+            });
+        }
     }
 
-    $(window).resize(function () {
-        if(!('ontouchstart' in window)) {
-            onResize();
+    //Resize event
+    if(!('ontouchstart' in window)) {
+        var resize_rtime;
+        var resize_timeout = false;
+        var resize_delta = 200;
+
+        $(window).resize(function() {
+            resize_rtime = new Date();
+            if (resize_timeout === false) {
+                resize_timeout = true;
+                setTimeout(resizeend, resize_delta);
+            }
+        });
+
+        function resizeend() {
+            if (new Date() - resize_rtime < resize_delta) {
+                setTimeout(resizeend, resize_delta);
+            } else {
+                resize_timeout = false;
+                onResize();
+            }
         }
-    });
+    };
+
 
 
     function refreshPlaceholder(rel, placeholder, selectedText) {
@@ -390,6 +453,7 @@ THE SOFTWARE.
                 var rel = this.data('rel');
                 $(".zselect#" + rel).on('change', 'input:checkbox', function (e) {
                     $(options.live).val(methods.getValue($("select[data-rel='" + rel + "']")));
+                    if(options.onChange) options.onChange(rel, $(options.live).val());
                 });
             }//end live
 
@@ -440,8 +504,9 @@ THE SOFTWARE.
             });
 
 
-            onResize();
+            onResize(id);
 
+            if(options.onLoad) options.onLoad(id);
 
         },
 
@@ -475,11 +540,9 @@ THE SOFTWARE.
             $("div#" + $(this).data('rel') + " ul").hide();
         },
 
-
         disable: function (val, state) {
             $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").prop("disabled", state);
         },
-
         disableAll: function (state) {
             $("div#" + $(this).data('rel') + " ul li input:checkbox").prop("disabled", ((state !== undefined) ? state : true));
         },
@@ -501,7 +564,7 @@ THE SOFTWARE.
             methods._refreshLive($(this).data('rel'));
         },
         reflow: function () {
-            onResize(true);
+            onResize($(this).attr('id'));
             $(".zselect#" + $(this).attr('id') + " input:first").trigger('change'); //serve per rimettere il placeholder ed il campo live
         },
 
