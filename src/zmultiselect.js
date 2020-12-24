@@ -162,7 +162,6 @@ THE SOFTWARE.
             }
             return;
         }
-        $(this).trigger('change');
         if ($(e.target).prop("tagName") !== "INPUT") {
             $("input:checkbox[disabled!='disabled']", this).prop('checked', function (i, val) {
                 return !val;
