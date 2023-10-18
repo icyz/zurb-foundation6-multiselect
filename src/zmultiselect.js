@@ -1,6 +1,6 @@
 /**
  * ZMULTISELECT-ZURB-FOUNDATION-6
- * v0.0.1b (2017-08-19)
+ * v1.0.0 (2017-08-19)
  * @author: Andrea Mariani
  * @email: andrea.mariani@fasys.it
  * @twitter: @andreamariani2k
@@ -34,8 +34,12 @@ THE SOFTWARE.
 (function ($) {
     "use strict";
 
+    var mobile_width_trigger = 600;
+    var mobile_ul_size = "80%";
     var clickEvent = "click";
     var timeout, longtouch;
+
+    //oldAlert($(window).outerWidth());
 
     if ('ontouchstart' in document.documentElement) {
         //clickEvent = "touchstart";
@@ -80,13 +84,13 @@ THE SOFTWARE.
         }
 
         var id = false;
-        if (e.target.tagName == 'SPAN') {
+        if (e.target.tagName === 'SPAN') {
             id = $(e.target).parent().attr('id');
         }
-        else if (e.target.tagName == 'DIV') {
+        else if (e.target.tagName === 'DIV') {
             id = $(e.target).attr('id');
         }
-        else if (e.target.tagName == 'INPUT') {
+        else if (e.target.tagName === 'INPUT') {
             if($(e.target).hasClass('zmsfilter_input')){
                 return;
             }
@@ -105,18 +109,22 @@ THE SOFTWARE.
         console.log("-----------");
         */
 
-
         if (container.parent().is(e.target) || container.prev().is(e.target) || ( container.is(':visible') && !container.parent().is(e.target) ) && ( container.has(e.target).length === 0 )) {
-            if (!id) container.hide(); //when user click out
+            if (!id) {
+                //when user click out
+                container.hide();
+            }
             else {
-
                 //popperjs integration
                 if($(".zselect#" + id).attr('popperjs')) {
                     zmspopper[id].scheduleUpdate();
                 }
 
+                //$(".zselect ul").not("#" + id).hide();
+                //$(".zselect#" + id + " ul").toggle();
 
-                $(".zselect#" + id + " ul").toggle();
+                $(".zselect[id!='"+ id +"'] ul").hide();
+                $("#" + id + "_ul").toggle();
 
                 if(clickEvent !== 'touchstart') {
                     setTimeout(function () { //jquery focus bug workaround
@@ -130,7 +138,7 @@ THE SOFTWARE.
     });
 
 
-    //escape key for close all zselect
+    //escape key will close all zselect
     $(window).on('keydown', function (e) {
         e = e || window.event;
         if (e.keyCode === 27) {
@@ -152,7 +160,7 @@ THE SOFTWARE.
         $(this).trigger(zbeforeChangeEvent);
         if (zbeforeChangeEvent.result === false) {
             e.preventDefault();
-            if ($(this).prop("tagName") == 'LI') {
+            if ($(this).prop("tagName") === 'LI') {
                 $(this).children().attr("checked", false);
                 $(this).children().trigger('change');
             }
@@ -162,6 +170,7 @@ THE SOFTWARE.
             }
             return;
         }
+        $(this).trigger('change');
         if ($(e.target).prop("tagName") !== "INPUT") {
             $("input:checkbox[disabled!='disabled']", this).prop('checked', function (i, val) {
                 return !val;
@@ -184,7 +193,6 @@ THE SOFTWARE.
 
     //optgroup
     $(document).on(clickEvent, '.optgroup', function () {
-
         if(longtouch){
             longtouch = false;
             return;
@@ -197,26 +205,42 @@ THE SOFTWARE.
         }
 
         var checked = false;
-        $.each($(this).parent().find(".optgroup_" + $(this).attr('data-optgroup') + " li input:checkbox[disabled!='disabled']"), function () {
-            if ($(this).prop('checked') == false) {
-                checked = true;
-                return false;
-            }
-        });
+        var checkbox_first = $(this).parent().find(".optgroup_" + $(this).attr('data-optgroup') + " li:visible:first").find("input:checkbox[disabled!='disabled']");
+        if (!checkbox_first.prop('checked')) {
+            checked = true;
+        }
 
-        $(this).parent().find(".optgroup_" + $(this).attr('data-optgroup') + " li input:checkbox[disabled!='disabled']").prop('checked', checked).change();
+        $(this).parent().find(".optgroup_" + $(this).attr('data-optgroup') + " li:visible").find("input:checkbox[disabled!='disabled']").prop('checked', checked).change();
     });
 
 
     //when resize window + init
     function onResize(id) {
+        var canvas_width = $(window).outerWidth();
+
         if(id) {
             var v = $('#' + id);
-            v.find("ul").attr('style', 'width:' + v.outerWidth() + 'px!important;');
+            if(canvas_width <= mobile_width_trigger){
+                v.find("ul").attr('style', 'width:'+ mobile_ul_size +'!important;');
+            }
+            else {
+                //console.log(v.find("ul"));
+                //console.log($("#" + id + "_ul"));
+                v.find("ul").attr('style', 'width:' + v.outerWidth() + 'px!important;');
+            }
         }
         else {
+            var style_width;
+
             $.each($(".zselect"), function (k, v) {
-                $(v).find("ul").attr('style', 'width:' + $(v).outerWidth() + 'px!important;');
+                if(canvas_width <= mobile_width_trigger){
+                    style_width = mobile_ul_size;
+                }
+                else{
+                    style_width = $(v).outerWidth() + "px";
+                }
+
+                $(v).find("ul").attr('style', 'width: '+ style_width +'!important;');
             });
         }
     }
@@ -238,7 +262,8 @@ THE SOFTWARE.
         function resizeend() {
             if (new Date() - resize_rtime < resize_delta) {
                 setTimeout(resizeend, resize_delta);
-            } else {
+            }
+            else {
                 resize_timeout = false;
                 onResize(false);
             }
@@ -249,6 +274,8 @@ THE SOFTWARE.
 
     function refreshPlaceholder(rel, placeholder, selectedText) {
         var checked = $("div#" + rel + " ul li input:checked").length;
+        $("select[data-rel='"+ rel +"']").trigger('change');
+
         if (checked > 0) {
             $(".zselect#" + rel + " span.zmshead").text(selectedText[0] + " " + checked + " " + selectedText[1] + " " + $("div#" + rel + " ul li input:checkbox").length);
         }
@@ -310,7 +337,7 @@ THE SOFTWARE.
 
             $.each($(this), function (k, v) {
 
-                id = "z" + (Math.random().toString(36).substr(2, 9));
+                id = "z" + (Math.random().toString(36).substring(2, 9));
 
                 $(v).hide().attr('data-rel', id).addClass('zms');
                 $(v).parent().append("<div id='" + id + "' class='zselect' "+ ((options.plugins.popperjs) ? "popperjs='"+ options.plugins.popperjs +"'" : "") +" ><span class='zmshead'></span><ul id='"+id+"_ul'></ul></div>");
@@ -361,7 +388,9 @@ THE SOFTWARE.
                     }
 
                     if (optgroupName === false) appendTo = '#' + id + ' ul';
-                    else appendTo = '#' + id + ' ul div.optgroup_' + optgroupId;
+                    else {
+                        appendTo = '#' + id + ' ul div.optgroup_' + optgroupId;
+                    }
 
 
                     $(appendTo).append("<li " + disabledClass + "><input value='" + $(z).val() + "' type='checkbox' " + checked + " " + disabled + " " + dataZ + " /><span style=\"cursor:pointer;width:100%;display:table-cell;\">" + $(z).text() + "</span></li>");
@@ -429,8 +458,8 @@ THE SOFTWARE.
                     $("div#" + rel + " ul").append('<li class="filterResult"></li>');
 
                 $("div#" + rel + " ul li.zmsfilter input").keyup(function () {
-                    var value = $(this).val().toLowerCase();
-                    var show = 0, tot = $("div#" + rel + " ul li input:checkbox").length;
+                    const value = $(this).val().toLowerCase();
+                    let show = 0, tot = $("div#" + rel + " ul li input:checkbox").length;
                     $("div#" + rel + " ul li input:checkbox").filter(function (i, v) {
                         //console.log($(v).val());
                         //console.log($(v).parent().text());
@@ -441,13 +470,21 @@ THE SOFTWARE.
                             $(v).parent().show();
                             show++;
                         }
-
                     });
 
                     if (options.filterResult === true) {
                         $("div#" + rel + " ul li.filterResult").text(options.filterResultText + ' ' + show + ' / ' + tot);
                     }
 
+                    //Nascondi OPTGROUP se non ci sono elementi
+                    $.each($("div#" + rel + " .optgroup"), function(){
+                        if($("div#" + rel + " div.optgroup_" + $(this).attr("data-optgroup")).find("li:visible").length > 0){
+                            $(this).show();
+                        }
+                        else{
+                            $(this).hide();
+                        }
+                    });
                 });
             }//end filter
 
@@ -461,26 +498,27 @@ THE SOFTWARE.
 
 
             if (options.get !== undefined) {  //console.log(options.get);
-                var query = window.location.search.substring(1);
+                var query = window.location.search.substring(1).replace(/%5B/g, '[').replace(/%5D/g, ']');
+                //var query = decodeURI(window.location.search.substring(1));
                 var vars = query.split("&");
                 var need = false;
                 for (var i = 0; i < vars.length; i++) {
                     var pair = vars[i].split("=");
                     if (pair[0] == options.get) {
-                        need = pair[1].replace(new RegExp(',', 'g'), '%2C').split('%2C');
-
+                        need = pair[1].replace(new RegExp(',', 'g'), '%2C').replace(/\+/g, ' ').split('%2C');
                     }
                 }
                 if (need) {
                     var _live = "";
                     for (var i = 0; i < need.length; i++) {
-                        $(".zselect#" + rel + " ul li input:checkbox[value='" + decodeURI(need[i]) + "']").prop('checked', true);
+                        $(".zselect#" + rel + " ul li input:checkbox[value='" + decodeURI(need[i]).replace(/\+/g, ' ') + "']").prop('checked', true);
                         _live += need[i] + ",";
                     }
                     //refresh live value
                     if (options.live !== undefined) {
                         $(options.live).val(_live.substring(0, _live.length - 1));
                     }
+                    $("select[data-rel='"+ rel +"']").trigger('change'); //trigger change on old select
                     refreshPlaceholder(rel, options.placeholder, options.selectedText);
                 }
             }
@@ -530,11 +568,28 @@ THE SOFTWARE.
                         value.push($(v).val());
                 }
             });
+
             $("div#" + $(this).data('rel') + " ul li input:checkbox:last").trigger('change');
-            methods._refreshLive($(this).data('rel'));
+            methods._refreshLive($(this).data('rel')); //todo: why data-rel ?
             return value;
         },
 
+        getValueText: function (selector) {
+            if (selector === undefined) selector = this;
+            //console.log(selector);
+            //console.log(options);
+            var value = [];
+            var rel = $(selector).data('rel');
+            $.each($("div#" + rel + " ul li input"), function (k, v) {
+                if ($(v).val() !== undefined) {
+                    if ($(v).prop('checked')) {
+                        value.push($(v).closest('li').text());
+                    }
+                }
+            });
+
+            return value;
+        },
 
         open: function () {
             $("div#" + $(this).data('rel') + " ul").show();
@@ -564,6 +619,10 @@ THE SOFTWARE.
         },
         destroy: function (val) {
             $("div#" + $(this).data('rel') + " ul li input:checkbox[value='" + val + "']").parent().remove();
+            methods._refreshLive($(this).data('rel'));
+        },
+        destroyAll: function () {
+            $("div#" + $(this).data('rel') + " ul li input:checkbox").parent().remove();
             methods._refreshLive($(this).data('rel'));
         },
         reflow: function(id) {
@@ -607,9 +666,22 @@ THE SOFTWARE.
             }
 
             methods._refreshLive($(this).data('rel'));
-        }
+        },
 
+        error: function (status) {
+            if (status === true) {
+                $("div#" + $(this).data('rel')).addClass("error");
+            }
+            else {
+                $("div#" + $(this).data('rel')).removeClass("error");
+            }
+            methods._refreshLive($(this).data('rel'));
+        },
         //,update : function( content ) {  }
+
+        placeholderCustomText: function(placeholderCustomText){
+            $(".zselect#" + $(this).data('rel') + " span.zmshead").text(placeholderCustomText || "");
+        }
     };
 
 
